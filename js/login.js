@@ -1,44 +1,33 @@
-import API_PATH from "./main.js";
-
 const elLoginForm = document.querySelector('.js-login-form');
-const elRegisterEmail = document.querySelector('.js-login-email');
-const elRegisterPassword = document.querySelector('.js-login-password');
+const elLoginEmail = document.querySelector(".js-login-email");
+const elLoginPassword = document.querySelector(".js-login-password");
 
-const token = localStorage.getItem('loginToken');
-if (token) {
-    window.location.pathname = '/index.html';
-}
+const API_PATH = 'http://192.168.3.6:5000/';
 
-const login = async (userEmail, userPassword) => {
+async function loginUser() {
     try {
-        const res = await fetch(API_PATH + "user/login", {
+        const res = await fetch(`${API_PATH}user/login`, {
             method: 'POST',
             headers: {
-                'content-type': "application/json",
+                "Content-Type": "application/json"
             },
             body: JSON.stringify({
-                email: userEmail,
-                password: userPassword,
-            }),
+                email: elLoginEmail.value,
+                password: elLoginPassword.value
+            })
         });
         const data = await res.json();
-
         if (data.token) {
-            localStorage.setItem('loginToken', data.token);
+            window.localStorage.setItem('loginToken', data.token);
+            window.location.href= "/";
         }
-
-        console.log(data.message);
-
+        console.log(data);
     } catch (error) {
-        console.log(error);
+        console.log(error.message);
     }
 }
 
-
 elLoginForm.addEventListener('submit', (evt) => {
     evt.preventDefault();
-    const email = elRegisterEmail.value;
-    const password = elRegisterPassword.value;
-
-    login(email, password)
+    loginUser();
 })
